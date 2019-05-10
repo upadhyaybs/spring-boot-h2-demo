@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bsu.restaurant.domain.Restaurant;
 import com.bsu.restaurant.service.IRestaurantService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 
 /**
  * @author bsu
@@ -24,6 +27,7 @@ import com.bsu.restaurant.service.IRestaurantService;
  */
 @RestController
 @RequestMapping("/restaurant")
+@Api(description = "Set of endpoints for Creating, Retrieving, Updating and Deleting of Restaurant.")
 public class RestaurantRestController {
 	
 	IRestaurantService service;
@@ -34,6 +38,7 @@ public class RestaurantRestController {
 	}
 	
      @PostMapping("/findById")
+     @ApiOperation("Returns restaurant based on provided Id in the request payload.")
      public ResponseEntity<Restaurant> findById(@RequestBody Restaurant request){
     	if (request==null || request.getId()==null || request.getId().longValue()==0) {
     		return new ResponseEntity<Restaurant>(HttpStatus.BAD_REQUEST);
@@ -44,6 +49,7 @@ public class RestaurantRestController {
      
      
      @PostMapping("/findByName")
+     @ApiOperation("Returns list of all restaurant for the matching name")
      public ResponseEntity<List<Restaurant>> findByName(@RequestBody Restaurant request){
     	 if (request==null || request.getName()==null) {
     		return new ResponseEntity<List<Restaurant>>(HttpStatus.BAD_REQUEST);
@@ -53,6 +59,7 @@ public class RestaurantRestController {
      }
      
      @PostMapping("/findByCity")
+     @ApiOperation("Returns list of all restaurant for the matching city")
      public ResponseEntity<List<Restaurant>> findByCity(@RequestBody Restaurant request){
     	 if (request==null || request.getCity()==null) {
     		return new ResponseEntity<List<Restaurant>>(HttpStatus.BAD_REQUEST);
@@ -63,6 +70,7 @@ public class RestaurantRestController {
      
      
      @PostMapping("/findByZipCode")
+     @ApiOperation("Returns list of all restaurant for the matching zipcode")
      public ResponseEntity<List<Restaurant>> findByZipCode(@RequestBody Restaurant request){
     	 if (request==null || request.getZipCode()==null) {
     		return new ResponseEntity<List<Restaurant>>(HttpStatus.BAD_REQUEST);
@@ -73,6 +81,7 @@ public class RestaurantRestController {
      
      
      @PostMapping("/findByState")
+     @ApiOperation("Returns list of all restaurant for the matching state")
      public ResponseEntity<List<Restaurant>> findByState(@RequestBody Restaurant request){
     	 if (request==null || request.getState()==null) {
     		return new ResponseEntity<List<Restaurant>>(HttpStatus.BAD_REQUEST);
@@ -83,6 +92,7 @@ public class RestaurantRestController {
      
      
      @PutMapping("/saveRestaurant")
+     @ApiOperation("Saves/Updates restaurant details in the DB")
      public ResponseEntity<Restaurant> saveRestaurant(@RequestBody Restaurant request){
     	 if (request==null || request.getName()==null||request.getState()==null) {
     		return new ResponseEntity<Restaurant>(HttpStatus.BAD_REQUEST);
