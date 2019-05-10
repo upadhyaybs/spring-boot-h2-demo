@@ -26,9 +26,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.BeanUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.bsu.restaurants.entity.Restaurant;
-import com.bsu.restaurants.repository.IRestaurantRepository;
-import com.bsu.restaurants.service.RestaurantServiceImpl;
+import com.bsu.restaurant.entity.Restaurant;
+import com.bsu.restaurant.repository.IRestaurantRepository;
+import com.bsu.restaurant.service.RestaurantServiceImpl;
 
 /**
  * @author bsu
@@ -114,7 +114,7 @@ public class RestaurantServiceTest {
 		restaurant.setEmail("tacobell.plano@gmail.com");
 		
 		when(repository.findById(4l)).thenReturn(Optional.of(restaurant));
-		com.bsu.restaurants.domain.Restaurant result= service.findById(4L);
+		com.bsu.restaurant.domain.Restaurant result= service.findById(4L);
 		
 		Assertions.assertNotNull(result);
 		assertEquals(new Long(4), result.getId());
@@ -128,17 +128,17 @@ public class RestaurantServiceTest {
 		
 		String nameTacoBell="Taco Bell";
 		when(repository.findByName(nameTacoBell)).thenReturn(allTacoBell);
-		List<com.bsu.restaurants.domain.Restaurant> result=service.findByName(nameTacoBell);
+		List<com.bsu.restaurant.domain.Restaurant> result=service.findByName(nameTacoBell);
 		
 		Assertions.assertNotNull(result);
-		assertThat(result).hasSize(2).extracting(com.bsu.restaurants.domain.Restaurant::getName).contains(nameTacoBell,nameTacoBell);
+		assertThat(result).hasSize(2).extracting(com.bsu.restaurant.domain.Restaurant::getName).contains(nameTacoBell,nameTacoBell);
 		
 		String nameSubway="Subway";
 		when(repository.findByName(nameSubway)).thenReturn(allSubway);
 		result=service.findByName(nameSubway);
 		
 		Assertions.assertNotNull(result);
-		assertThat(result).hasSize(1).extracting(com.bsu.restaurants.domain.Restaurant::getName).contains(nameSubway);
+		assertThat(result).hasSize(1).extracting(com.bsu.restaurant.domain.Restaurant::getName).contains(nameSubway);
 	}
 	
 	@Test
@@ -146,20 +146,20 @@ public class RestaurantServiceTest {
 		String city="Plano";
 		
 		when(repository.findByCity(city)).thenReturn(allPlanoRestaurants);
-		List<com.bsu.restaurants.domain.Restaurant> restaurants=service.findByCity(city);
+		List<com.bsu.restaurant.domain.Restaurant> restaurants=service.findByCity(city);
 		
 		Assertions.assertNotNull(restaurants);
-		assertThat(restaurants).hasSize(2).extracting(com.bsu.restaurants.domain.Restaurant::getCity).contains(city,city);
+		assertThat(restaurants).hasSize(2).extracting(com.bsu.restaurant.domain.Restaurant::getCity).contains(city,city);
 	}
 	
 	@Test
 	public void findByZipCodeTest() {
 		String zip="75093";
 		when(repository.findByZipCode(zip)).thenReturn(allSameZipRestaurants);
-		List<com.bsu.restaurants.domain.Restaurant> restaurants=service.findByZipCode(zip);
+		List<com.bsu.restaurant.domain.Restaurant> restaurants=service.findByZipCode(zip);
 		
 		Assertions.assertNotNull(restaurants);
-		assertThat(restaurants).hasSize(2).extracting(com.bsu.restaurants.domain.Restaurant::getZipCode).contains(zip);
+		assertThat(restaurants).hasSize(2).extracting(com.bsu.restaurant.domain.Restaurant::getZipCode).contains(zip);
 	}
 	
 	@Test
@@ -167,10 +167,10 @@ public class RestaurantServiceTest {
 		String state="TX";
 		
 		when(repository.findByState(state)).thenReturn(allRestaurants);
-		List<com.bsu.restaurants.domain.Restaurant> restaurants=service.findByState(state);
+		List<com.bsu.restaurant.domain.Restaurant> restaurants=service.findByState(state);
 		
 		Assertions.assertNotNull(restaurants);
-		assertThat(restaurants).hasSize(3).extracting(com.bsu.restaurants.domain.Restaurant::getState).contains(state);
+		assertThat(restaurants).hasSize(3).extracting(com.bsu.restaurant.domain.Restaurant::getState).contains(state);
 	}
 	
 	@Test
@@ -184,12 +184,12 @@ public class RestaurantServiceTest {
 		entity.setZipCode("75093");
 		entity.setPhone("800-202-8077");
 		
-		com.bsu.restaurants.domain.Restaurant restaurant=new com.bsu.restaurants.domain.Restaurant();
+		com.bsu.restaurant.domain.Restaurant restaurant=new com.bsu.restaurant.domain.Restaurant();
 		
 		BeanUtils.copyProperties(entity, restaurant);
 		
 		when(repository.save(entity)).thenReturn(entity);
-		com.bsu.restaurants.domain.Restaurant result=  service.save(restaurant);
+		com.bsu.restaurant.domain.Restaurant result=  service.save(restaurant);
 		
 		assertEquals(new Long(4), result.getId());
 		assertEquals("Taco Bell",result.getName());

@@ -1,11 +1,11 @@
 /**
  * 
  */
-package com.bsu.restaurants.service;
+package com.bsu.restaurant.service;
 
 import java.util.List;
 
-import com.bsu.restaurants.domain.Restaurant;
+import com.bsu.restaurant.domain.Restaurant;
 
 
 /**

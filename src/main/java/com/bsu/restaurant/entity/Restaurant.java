@@ -1,36 +1,39 @@
 /**
  * 
  */
-package com.bsu.restaurants.domain;
+package com.bsu.restaurant.entity;
 
-import javax.validation.constraints.NotEmpty;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @author aarna
+ * @author bsu
  *
  */
+
 @Data
 @NoArgsConstructor
+@Entity
 public class Restaurant {
 	
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotEmpty
 	private String name;
 	
-	@NotEmpty
 	private String address;
 	
-	@NotEmpty
 	private String city;
 	
-	@NotEmpty
 	private String state;
 	
-	@NotEmpty
 	private String zipCode;
 	
 	private String phone;

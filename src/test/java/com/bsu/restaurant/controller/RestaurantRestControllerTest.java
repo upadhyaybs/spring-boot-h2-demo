@@ -25,9 +25,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.bsu.restaurants.controller.RestaurantRestController;
-import com.bsu.restaurants.domain.Restaurant;
-import com.bsu.restaurants.service.IRestaurantService;
+import com.bsu.restaurant.controller.RestaurantRestController;
+import com.bsu.restaurant.domain.Restaurant;
+import com.bsu.restaurant.service.IRestaurantService;
 
 
 /**
@@ -70,7 +70,7 @@ public class RestaurantRestControllerTest {
 	@Test
 	public void findByIdTest_Found() {
 		
-		com.bsu.restaurants.domain.Restaurant request=new com.bsu.restaurants.domain.Restaurant();
+		com.bsu.restaurant.domain.Restaurant request=new com.bsu.restaurant.domain.Restaurant();
 		request.setId(4L);
 		
 		when(service.findById(4l)).thenReturn(restaurant);
@@ -90,7 +90,7 @@ public class RestaurantRestControllerTest {
 	@Test
 	public void findByIdTest_NotFound() {
 		
-		com.bsu.restaurants.domain.Restaurant request=new com.bsu.restaurants.domain.Restaurant();
+		com.bsu.restaurant.domain.Restaurant request=new com.bsu.restaurant.domain.Restaurant();
 		request.setId(-99l);
 		
 		when(service.findById(4l)).thenReturn(restaurant);
@@ -114,7 +114,7 @@ public class RestaurantRestControllerTest {
 	
 	@Test
 	public void findByNameTest_Found() {
-		com.bsu.restaurants.domain.Restaurant request=new com.bsu.restaurants.domain.Restaurant();
+		com.bsu.restaurant.domain.Restaurant request=new com.bsu.restaurant.domain.Restaurant();
 		request.setName("Taco Bell");
 		
 		when(service.findByName("Taco Bell")).thenReturn(restaurants);

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.bsu.restaurants.domain;
+package com.bsu.restaurant.domain;
 
 import java.util.HashMap;
 import java.util.Map;
