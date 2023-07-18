@@ -1,1 +1,1 @@
-# spring-boot-h2-demo
+# springboot-h2-example
