@@ -1,11 +1,11 @@
 /**
  * 
  */
-package com.bsu.restaurant.service;
+package com.tp.restaurant.service;
 
 import java.util.List;
 
-import com.bsu.restaurant.domain.Restaurant;
+import com.tp.restaurant.domain.Restaurant;
 
 
 /**
@@ -15,12 +15,14 @@ import com.bsu.restaurant.domain.Restaurant;
 public interface IRestaurantService {
 	
 	public Restaurant save(Restaurant entity);
+
+	public List<Restaurant> findAll();
 	
 	public Restaurant findById(Long id);
 	
 	public List<Restaurant> findByName(String name);
 	
-	public List<Restaurant> findByCity(String zipCode);
+	public List<Restaurant> findByCity(String cityName);
 	
 	public List<Restaurant> findByZipCode(String zipCode);
 	

@@ -1,10 +1,11 @@
 /**
  * 
  */
-package com.bsu.restaurant.service;
+package com.tp.restaurant.service;
 
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -12,32 +13,30 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.tp.restaurant.entity.Restaurant;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.runner.RunWith;
+
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.BeanUtils;
-import org.springframework.boot.test.context.SpringBootTest;
+import com.tp.restaurant.repository.IRestaurantRepository;
 
-import com.bsu.restaurant.entity.Restaurant;
-import com.bsu.restaurant.repository.IRestaurantRepository;
-import com.bsu.restaurant.service.RestaurantServiceImpl;
 
 /**
  * @author bsu
  *
  */
 @TestInstance(Lifecycle.PER_CLASS)
-@SpringBootTest
-@RunWith(MockitoJUnitRunner.class)
-public class RestaurantServiceTest {
+//@SpringBootTest
+//@RunWith(MockitoJUnitRunner.class)
+class RestaurantServiceTest {
 	
 	@Mock
 	IRestaurantRepository repository;
@@ -57,7 +56,7 @@ public class RestaurantServiceTest {
 	
 	@BeforeAll
 	public void setUp()  {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		
 		Restaurant tacoBell1=new Restaurant();
 		tacoBell1.setId(4L);
@@ -102,7 +101,7 @@ public class RestaurantServiceTest {
     }
 	
 	@Test
-	public void findByIdTest() {
+	void findByIdTest() {
 		Restaurant restaurant=new Restaurant();
 		restaurant.setId(4L);
 		restaurant.setName("Taco Bell");
@@ -113,68 +112,110 @@ public class RestaurantServiceTest {
 		restaurant.setPhone("800-202-8077");
 		restaurant.setEmail("tacobell.plano@gmail.com");
 		
-		when(repository.findById(4l)).thenReturn(Optional.of(restaurant));
-		com.bsu.restaurant.domain.Restaurant result= service.findById(4L);
+		when(repository.findById(4L)).thenReturn(Optional.of(restaurant));
+		com.tp.restaurant.domain.Restaurant result= service.findById(4L);
 		
 		Assertions.assertNotNull(result);
-		assertEquals(new Long(4), result.getId());
+		assertEquals(4, result.getId());
 		assertEquals("Taco Bell",result.getName());
+	}
+
+	@Test
+	void findById_FailTest() {
+
+		when(repository.findById(1L)).thenReturn(Optional.empty());
+		com.tp.restaurant.domain.Restaurant result= service.findById(1L);
+
+		Assertions.assertNull(result);
+	}
+
+
+	@Test
+	void findAllTest() {
+		List<Restaurant> restaurantList=new ArrayList<>();
+		Restaurant restaurant=new Restaurant();
+		restaurant.setId(4L);
+		restaurant.setName("Taco Bell");
+		restaurant.setAddress("1520 Preston Rd");
+		restaurant.setCity("Plano");
+		restaurant.setState("TX");
+		restaurant.setZipCode("75093");
+		restaurant.setPhone("800-202-8077");
+		restaurant.setEmail("tacobell.plano@gmail.com");
+
+		restaurantList.add(restaurant);
+
+		restaurant=new Restaurant();
+		restaurant.setId(1L);
+		restaurant.setName("India Chat Cafe");
+		restaurant.setAddress("1520 Preston Rd");
+		restaurant.setCity("Plano");
+		restaurant.setState("TX");
+		restaurant.setZipCode("75099");
+		restaurant.setPhone("800-202-8088");
+		restaurant.setEmail("indiachatcafe.plano@gmail.com");
+
+		when(repository.findAll()).thenReturn(restaurantList);
+		List<com.tp.restaurant.domain.Restaurant> result= service.findAll();
+
+		Assertions.assertNotNull(result);
+		Assertions.assertTrue( result.size()>0);
 	}
 	
 	@Test
-	public void findByNameTest() {
+	void findByNameTest() {
 		Restaurant tacoBell=new Restaurant();
 		tacoBell.setName("Taco Bell");
 		
 		String nameTacoBell="Taco Bell";
 		when(repository.findByName(nameTacoBell)).thenReturn(allTacoBell);
-		List<com.bsu.restaurant.domain.Restaurant> result=service.findByName(nameTacoBell);
+		List<com.tp.restaurant.domain.Restaurant> result=service.findByName(nameTacoBell);
 		
 		Assertions.assertNotNull(result);
-		assertThat(result).hasSize(2).extracting(com.bsu.restaurant.domain.Restaurant::getName).contains(nameTacoBell,nameTacoBell);
+		assertThat(result).hasSize(2).extracting(com.tp.restaurant.domain.Restaurant::getName).contains(nameTacoBell,nameTacoBell);
 		
 		String nameSubway="Subway";
 		when(repository.findByName(nameSubway)).thenReturn(allSubway);
 		result=service.findByName(nameSubway);
 		
 		Assertions.assertNotNull(result);
-		assertThat(result).hasSize(1).extracting(com.bsu.restaurant.domain.Restaurant::getName).contains(nameSubway);
+		assertThat(result).hasSize(1).extracting(com.tp.restaurant.domain.Restaurant::getName).contains(nameSubway);
 	}
 	
 	@Test
-	public void findByCityTest() {
+	void findByCityTest() {
 		String city="Plano";
 		
 		when(repository.findByCity(city)).thenReturn(allPlanoRestaurants);
-		List<com.bsu.restaurant.domain.Restaurant> restaurants=service.findByCity(city);
+		List<com.tp.restaurant.domain.Restaurant> restaurants=service.findByCity(city);
 		
 		Assertions.assertNotNull(restaurants);
-		assertThat(restaurants).hasSize(2).extracting(com.bsu.restaurant.domain.Restaurant::getCity).contains(city,city);
+		assertThat(restaurants).hasSize(2).extracting(com.tp.restaurant.domain.Restaurant::getCity).contains(city,city);
 	}
 	
 	@Test
-	public void findByZipCodeTest() {
+	void findByZipCodeTest() {
 		String zip="75093";
 		when(repository.findByZipCode(zip)).thenReturn(allSameZipRestaurants);
-		List<com.bsu.restaurant.domain.Restaurant> restaurants=service.findByZipCode(zip);
+		List<com.tp.restaurant.domain.Restaurant> restaurants=service.findByZipCode(zip);
 		
 		Assertions.assertNotNull(restaurants);
-		assertThat(restaurants).hasSize(2).extracting(com.bsu.restaurant.domain.Restaurant::getZipCode).contains(zip);
+		assertThat(restaurants).hasSize(2).extracting(com.tp.restaurant.domain.Restaurant::getZipCode).contains(zip);
 	}
 	
 	@Test
-	public void findByStateTest() {
+	 void findByStateTest() {
 		String state="TX";
 		
 		when(repository.findByState(state)).thenReturn(allRestaurants);
-		List<com.bsu.restaurant.domain.Restaurant> restaurants=service.findByState(state);
+		List<com.tp.restaurant.domain.Restaurant> restaurants=service.findByState(state);
 		
 		Assertions.assertNotNull(restaurants);
-		assertThat(restaurants).hasSize(3).extracting(com.bsu.restaurant.domain.Restaurant::getState).contains(state);
+		assertThat(restaurants).hasSize(3).extracting(com.tp.restaurant.domain.Restaurant::getState).contains(state);
 	}
 	
 	@Test
-	public void saveRestaurantTest() {
+	 void saveRestaurantTest() {
 		Restaurant entity=new Restaurant();
 		entity.setId(4L);
 		entity.setName("Taco Bell");
@@ -184,14 +225,14 @@ public class RestaurantServiceTest {
 		entity.setZipCode("75093");
 		entity.setPhone("800-202-8077");
 		
-		com.bsu.restaurant.domain.Restaurant restaurant=new com.bsu.restaurant.domain.Restaurant();
+		com.tp.restaurant.domain.Restaurant restaurant=new com.tp.restaurant.domain.Restaurant();
 		
 		BeanUtils.copyProperties(entity, restaurant);
 		
 		when(repository.save(entity)).thenReturn(entity);
-		com.bsu.restaurant.domain.Restaurant result=  service.save(restaurant);
+		com.tp.restaurant.domain.Restaurant result=  service.save(restaurant);
 		
-		assertEquals(new Long(4), result.getId());
+		assertEquals(4, result.getId());
 		assertEquals("Taco Bell",result.getName());
 	}
 	

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.bsu.restaurant.entity;
+package com.tp.restaurant.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

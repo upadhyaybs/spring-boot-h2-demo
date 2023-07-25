@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.bsu.restaurant.controller;
+package com.tp.restaurant.controller;
 
 import static org.mockito.Mockito.when;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import com.tp.restaurant.domain.Restaurant;
+import com.tp.restaurant.service.IRestaurantService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,14 +22,11 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.bsu.restaurant.controller.RestaurantRestController;
-import com.bsu.restaurant.domain.Restaurant;
-import com.bsu.restaurant.service.IRestaurantService;
+import org.springframework.test.context.junit4.SpringRunner;
 
 
 /**
@@ -35,9 +34,9 @@ import com.bsu.restaurant.service.IRestaurantService;
  *
  */
 @TestInstance(Lifecycle.PER_CLASS)
-@SpringBootTest
-@RunWith(MockitoJUnitRunner.class)
-public class RestaurantRestControllerTest {
+@RunWith(SpringRunner.class)
+@WebMvcTest(RestaurantRestController.class)
+class RestaurantRestControllerTest {
 	
 	@Mock
 	IRestaurantService service;
@@ -51,7 +50,7 @@ public class RestaurantRestControllerTest {
 	
 	@BeforeAll
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		
 		restaurant=new Restaurant();
 		restaurant.setId(4L);
@@ -68,13 +67,13 @@ public class RestaurantRestControllerTest {
 	}
 	
 	@Test
-	public void findByIdTest_Found() {
-		
-		com.bsu.restaurant.domain.Restaurant request=new com.bsu.restaurant.domain.Restaurant();
+	void findByIdTest_Found() {
+
+		Restaurant request=new Restaurant();
 		request.setId(4L);
 		
-		when(service.findById(4l)).thenReturn(restaurant);
-		ResponseEntity<Restaurant> response=controller.findById(request);
+		when(service.findById(4L)).thenReturn(restaurant);
+		ResponseEntity<Restaurant> response=controller.findById(4L);
 		
 		//1. Check response status code
 		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -86,15 +85,36 @@ public class RestaurantRestControllerTest {
 		Assertions.assertEquals(request.getId(), response.getBody().getId());
 		
 	}
+
+	@Test
+	void findByIdTest_Found1() {
+
+		Restaurant request=new Restaurant();
+		request.setId(4L);
+
+
+		when(service.findById(4L)).thenReturn(restaurant);
+		ResponseEntity<Restaurant> response=controller.findById(4L);
+
+		//1. Check response status code
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+
+		//2. Check response is not  null or empty
+		Assertions.assertNotNull(response.getBody());
+
+		//3. Compare ID
+		Assertions.assertEquals(request.getId(), response.getBody().getId());
+
+	}
 	
 	@Test
-	public void findByIdTest_NotFound() {
+	void findByIdTest_NotFound() {
 		
-		com.bsu.restaurant.domain.Restaurant request=new com.bsu.restaurant.domain.Restaurant();
-		request.setId(-99l);
+		Restaurant request=new Restaurant();
+		request.setId(-99L);
 		
-		when(service.findById(4l)).thenReturn(restaurant);
-		ResponseEntity<Restaurant> response=controller.findById(request);
+		when(service.findById(4L)).thenReturn(restaurant);
+		ResponseEntity<Restaurant> response=controller.findById(7L);
 		
 		//1. Check response status code
 		Assertions.assertEquals(HttpStatus.EXPECTATION_FAILED, response.getStatusCode());
@@ -102,9 +122,9 @@ public class RestaurantRestControllerTest {
 	}
 	
 	@Test
-	public void findByIdTest_BadRequest() {
-		when(service.findById(4l)).thenReturn(restaurant);
-		ResponseEntity<Restaurant> response=controller.findById(null);
+	void findByIdTest_BadRequest() {
+		when(service.findById(4L)).thenReturn(restaurant);
+		ResponseEntity<Restaurant> response=controller.findById(0);
 		
 		//1. Check response status code
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -113,8 +133,8 @@ public class RestaurantRestControllerTest {
 	
 	
 	@Test
-	public void findByNameTest_Found() {
-		com.bsu.restaurant.domain.Restaurant request=new com.bsu.restaurant.domain.Restaurant();
+	void findByNameTest_Found() {
+		Restaurant request=new Restaurant();
 		request.setName("Taco Bell");
 		
 		when(service.findByName("Taco Bell")).thenReturn(restaurants);
@@ -133,15 +153,35 @@ public class RestaurantRestControllerTest {
 	}
 	
 	@Test
-	public void findByNameTest_BadRequest() {
+	void findByNameTest_BadRequest() {
 		when(service.findByName("Taco Bell")).thenReturn(restaurants);
 		ResponseEntity<List<Restaurant>> response=controller.findByName(null);
 		
 		//1. Check response status code
 		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-		
-		
-		
+	}
+
+	@Test
+	void findByCityTest_Found() {
+
+		Restaurant request=new Restaurant();
+		request.setId(4L);
+
+		List<Restaurant> restaurantList=new ArrayList<>();
+		restaurantList.add(restaurant);
+
+		String city="Dallas";
+
+		when(service.findByCity(city)).thenReturn(restaurantList);
+		ResponseEntity<List<Restaurant>> response=controller.findByCity(request);
+
+		//1. Check response status code
+		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+
+		//2. Check response is not  null or empty
+		Assertions.assertNotNull(response.getBody());
+
+
 	}
 	
 	

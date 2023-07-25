@@ -1,8 +1,9 @@
 /**
  * 
  */
-package com.bsu.restaurant.domain;
+package com.tp.restaurant.domain;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,8 +18,10 @@ import lombok.Data;
  *
  */
 @Data
-public final class Response<T> {
+public final class Response<T> implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	@JsonIgnore
 	private final Map<String,Object> data=new HashMap<>();
 	

@@ -1,14 +1,13 @@
 /**
  * 
  */
-package com.bsu.restaurant.repository;
+package com.tp.restaurant.repository;
 
 import java.util.List;
 
+import com.tp.restaurant.entity.Restaurant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import com.bsu.restaurant.entity.Restaurant;
 
 /**
  * @author bsu
