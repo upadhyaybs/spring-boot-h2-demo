@@ -6,10 +6,10 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.13</version>
+		<version>3.2.7</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.bsu</groupId>
+	<groupId>com.tp</groupId>
 	<artifactId>springboot-h2-example</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>springboot-h2-example</name>
@@ -17,19 +17,17 @@
 
 	<properties>
 		<project.test.result.directory>${project.build.directory}/test-results</project.test.result.directory>
+		<!--
 		<sonar.host.url>http://localhost:9000</sonar.host.url>
 		<sonar.projectKey>springboot-h2-demo</sonar.projectKey>
-		<sonar.token>sqp_8cdcf8fe46d459882f1612f212c0cc04e8c91591</sonar.token>
+		<sonar.token></sonar.token>
 		<sonar.scm.provider>git</sonar.scm.provider>
+		-->
 		<sonar.java.codeCoveragePlugin>jacoco</sonar.java.codeCoveragePlugin>
 		<sonar.coverage.jacoco.xmlReportPaths>${project.test.result.directory}/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-		<sonar.exclusions>
-			**/*.xml
-		</sonar.exclusions>
-		<sonar.coverage.exclusions>
-			**/qualitymeasurementsample/*
-		</sonar.coverage.exclusions>
-		<java.version>11</java.version>
+		<sonar.exclusions>**/*.xml</sonar.exclusions>
+		<sonar.coverage.exclusions>**/qualitymeasurementsample/*</sonar.coverage.exclusions>
+		<java.version>21</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -68,13 +66,13 @@
 		<dependency>
 			<groupId>com.tngtech.archunit</groupId>
 			<artifactId>archunit</artifactId>
-			<version>1.0.1</version>
+			<version>1.2.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.tngtech.archunit</groupId>
 			<artifactId>archunit-junit5</artifactId>
-			<version>1.0.1</version>
+			<version>1.2.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -85,8 +83,8 @@
 		<!-- swagger -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.6.15</version>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.6.0</version>
 		</dependency>
 		<!-- junit 5 -->
 		<dependency>
@@ -114,32 +112,11 @@
 			<artifactId>mockito-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-inline</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-library</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.intuit.karate</groupId>
-			<artifactId>karate-core</artifactId>
-			<version>1.2.1.RC2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.intuit.karate</groupId>
-			<artifactId>karate-junit5</artifactId>
-			<version>1.2.1.RC2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.intuit.karate</groupId>
-			<artifactId>karate-apache</artifactId>
-			<version>0.9.6</version>
-			<scope>test</scope>
-		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
@@ -177,7 +154,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.5</version>
+				<version>0.8.12</version>
 				<executions>
 					<execution>
 						<id>pre-test</id>

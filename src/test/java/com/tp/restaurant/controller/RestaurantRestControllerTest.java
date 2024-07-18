@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -26,7 +26,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 
 
 /**
@@ -34,7 +36,8 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  */
 @TestInstance(Lifecycle.PER_CLASS)
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
 @WebMvcTest(RestaurantRestController.class)
 class RestaurantRestControllerTest {
 	
@@ -166,11 +169,12 @@ class RestaurantRestControllerTest {
 
 		Restaurant request=new Restaurant();
 		request.setId(4L);
+		request.setCity("Plano");
 
 		List<Restaurant> restaurantList=new ArrayList<>();
 		restaurantList.add(restaurant);
 
-		String city="Dallas";
+		String city="Plano";
 
 		when(service.findByCity(city)).thenReturn(restaurantList);
 		ResponseEntity<List<Restaurant>> response=controller.findByCity(request);

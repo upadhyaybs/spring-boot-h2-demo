@@ -14,7 +14,7 @@ import java.io.Serializable;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 
-public class ArchunitApplicationTests {
+class ArchunitApplicationTests {
 
     private JavaClasses importedClasses;
 
@@ -23,18 +23,18 @@ public class ArchunitApplicationTests {
     public void  setup() {
         importedClasses = new ClassFileImporter()
                 .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-                .importPackages("com.bsu.restaurant");
+                .importPackages("com.tp.restaurant");
     }
 
     /*    Package Dependency Checks*/
     @Test
     void servicesAndRepositoriesShouldNotDependOnWebLayer() {
         noClasses()
-                .that().resideInAnyPackage("com.bsu.restaurant.service..")
-                .or().resideInAnyPackage("com.bsu.restaurant.repository..")
+                .that().resideInAnyPackage("com.tp.restaurant.service..")
+                .or().resideInAnyPackage("com.tp.restaurant.repository..")
                 .should()
                 .dependOnClassesThat()
-                .resideInAnyPackage("com.bsu.restaurant.controller..")
+                .resideInAnyPackage("com.tp.restaurant.controller..")
                 .because("Services and repositories should not depend on web layer")
                 .check(importedClasses);
     }

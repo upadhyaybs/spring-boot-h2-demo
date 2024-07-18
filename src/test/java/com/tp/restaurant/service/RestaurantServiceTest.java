@@ -3,10 +3,10 @@
  */
 package com.tp.restaurant.service;
 
+import static java.util.Arrays.*;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.BeanUtils;
 import com.tp.restaurant.repository.IRestaurantRepository;
+import org.springframework.test.context.ActiveProfiles;
 
 
 /**
@@ -34,8 +35,7 @@ import com.tp.restaurant.repository.IRestaurantRepository;
  *
  */
 @TestInstance(Lifecycle.PER_CLASS)
-//@SpringBootTest
-//@RunWith(MockitoJUnitRunner.class)
+@ActiveProfiles("test")
 class RestaurantServiceTest {
 	
 	@Mock
@@ -88,11 +88,11 @@ class RestaurantServiceTest {
 		subway.setPhone("800-202-8098");
 		subway.setEmail("subway.plano@gmail.com");
 
-		allRestaurants=Arrays.asList(tacoBell1,tacoBell2,subway);
-		allTacoBell=Arrays.asList(tacoBell1,tacoBell2);
-		allSubway=Arrays.asList(subway);
-		allPlanoRestaurants=Arrays.asList(tacoBell1,subway);
-		allSameZipRestaurants=Arrays.asList(tacoBell1,subway);
+		allRestaurants= asList(tacoBell1,tacoBell2,subway);
+		allTacoBell= asList(tacoBell1,tacoBell2);
+		allSubway= asList(subway);
+		allPlanoRestaurants= asList(tacoBell1,subway);
+		allSameZipRestaurants= asList(tacoBell1,subway);
 	}
 	
 	@AfterAll
@@ -159,7 +159,7 @@ class RestaurantServiceTest {
 		List<com.tp.restaurant.domain.Restaurant> result= service.findAll();
 
 		Assertions.assertNotNull(result);
-		Assertions.assertTrue( result.size()>0);
+        Assertions.assertFalse(result.isEmpty());
 	}
 	
 	@Test

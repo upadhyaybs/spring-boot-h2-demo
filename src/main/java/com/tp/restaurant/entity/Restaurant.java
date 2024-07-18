@@ -3,10 +3,7 @@
  */
 package com.tp.restaurant.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.*;
 
 
 import lombok.Data;
@@ -20,6 +17,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
+@Table(name = "restaurant")
 public class Restaurant {
 	
 	@Id

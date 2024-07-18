@@ -19,8 +19,7 @@ import com.tp.restaurant.domain.Restaurant;
  *
  */
 @RestController
-@RequestMapping("/rest/api/restaurant")
-@Api(description = "Set of endpoints for Creating, Retrieving, Updating and Deleting of Restaurant.")
+@RequestMapping("/api/restaurants")
 public class RestaurantRestController {
 	
 	IRestaurantService service;

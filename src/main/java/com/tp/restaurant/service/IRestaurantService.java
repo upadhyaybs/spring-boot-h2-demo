@@ -6,26 +6,28 @@ package com.tp.restaurant.service;
 import java.util.List;
 
 import com.tp.restaurant.domain.Restaurant;
+import org.springframework.stereotype.Service;
 
 
 /**
  * @author bsu
  *
  */
+@Service
 public interface IRestaurantService {
 	
-	public Restaurant save(Restaurant entity);
+	 Restaurant save(Restaurant entity);
 
-	public List<Restaurant> findAll();
+	 List<Restaurant> findAll();
 	
-	public Restaurant findById(Long id);
+	 Restaurant findById(Long id);
 	
-	public List<Restaurant> findByName(String name);
+	 List<Restaurant> findByName(String name);
 	
-	public List<Restaurant> findByCity(String cityName);
+	 List<Restaurant> findByCity(String cityName);
 	
-	public List<Restaurant> findByZipCode(String zipCode);
+	 List<Restaurant> findByZipCode(String zipCode);
 	
-	public List<Restaurant> findByState(String state);
+	 List<Restaurant> findByState(String state);
 
 }
