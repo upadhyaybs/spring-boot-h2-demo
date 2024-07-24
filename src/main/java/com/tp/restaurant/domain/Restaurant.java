@@ -5,6 +5,7 @@ package com.tp.restaurant.domain;
 
 import jakarta.validation.constraints.NotEmpty;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +18,7 @@ import java.io.Serializable;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Restaurant implements Serializable {
 
 	@Serial

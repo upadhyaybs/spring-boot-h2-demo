@@ -73,19 +73,19 @@ public class RestaurantRestController {
 
      @GetMapping("/zip/{zipCode}")
      public ResponseEntity<List<Restaurant>> findByZipCode(@PathVariable String zipCode){
-    	 if (zipCode==null) {
-    		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    	}
     	List<Restaurant> result= service.findByZipCode(zipCode);
+		if (result.isEmpty()){
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 		return new ResponseEntity<>( result, HttpStatus.OK);
      }
 
      @GetMapping("/state/{state}")
      public ResponseEntity<List<Restaurant>> findByState(@PathVariable String state){
-    	 if (state==null) {
-    		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    	}
     	List<Restaurant> result=  service.findByState(state);
+		if (result.isEmpty()){
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 		return new ResponseEntity<>(result, HttpStatus.OK);
      }
 

@@ -4,31 +4,30 @@
 package com.tp.restaurant.controller;
 
 import static org.mockito.Mockito.when;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tp.restaurant.domain.Restaurant;
 import com.tp.restaurant.service.IRestaurantService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
 /**
@@ -38,25 +37,26 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @TestInstance(Lifecycle.PER_CLASS)
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-@WebMvcTest(RestaurantRestController.class)
 class RestaurantRestControllerTest {
-	
+
+	private MockMvc mockMvc;
+
 	@Mock
-	IRestaurantService service;
-	
+	private IRestaurantService service;
+
 	@InjectMocks
-	RestaurantRestController controller;
+	private RestaurantRestController controller;
 
 	Restaurant restaurant;
 	
 	List<Restaurant> restaurants;
-	
-	@BeforeAll
-	public void setUp() {
+
+	@BeforeEach
+	public void setup() {
 		MockitoAnnotations.openMocks(this);
-		
+		mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 		restaurant=new Restaurant();
-		restaurant.setId(4L);
+		restaurant.setId(1L);
 		restaurant.setName("Taco Bell");
 		restaurant.setAddress("1520 Preston Rd");
 		restaurant.setCity("Plano");
@@ -64,129 +64,185 @@ class RestaurantRestControllerTest {
 		restaurant.setZipCode("75093");
 		restaurant.setPhone("800-202-8077");
 		restaurant.setEmail("tacobell.plano@gmail.com");
-		
+
 		restaurants=new ArrayList<>();
 		restaurants.add(restaurant);
 	}
-	
-	@Test
-	void findByIdTest_Found() {
 
-		Restaurant request=new Restaurant();
-		request.setId(4L);
-		
-		when(service.findById(4L)).thenReturn(restaurant);
-		ResponseEntity<Restaurant> response=controller.findById(4L);
-		
-		//1. Check response status code
-		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-		
-		//2. Check response is not  null or empty
-		Assertions.assertNotNull(response.getBody());
-		
-		//3. Compare ID
-		Assertions.assertEquals(request.getId(), response.getBody().getId());
-		
+	@Test
+	void testSaveRestaurant() throws Exception {
+		when(service.save(restaurant)).thenReturn(restaurant);
+
+		mockMvc.perform(put("/api/restaurants")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new ObjectMapper().writeValueAsString(restaurant)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("Taco Bell"));
 	}
 
 	@Test
-	void findByIdTest_Found1() {
+	@DisplayName("Save Restaurant Test with Bad Payload")
+	void testSaveRestaurantWithInvalidRequest() throws Exception {
+		// Test case 1: Null request
+		mockMvc.perform(put("/api/restaurants")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new ObjectMapper().writeValueAsString(null)))
+				.andExpect(status().isBadRequest());
 
-		Restaurant request=new Restaurant();
-		request.setId(4L);
+		// Test case 2: Request with null name
+		Restaurant requestWithNullName = new Restaurant(1l,null,
+				"1231 Test Ln",  "City 1", "CA",  "12345","test1@email.com","123-223-5660");
+		mockMvc.perform(put("/api/restaurants")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new ObjectMapper().writeValueAsString(requestWithNullName)))
+				.andExpect(status().isBadRequest());
 
+		// Test case 3: Request with null state
+		Restaurant requestWithNullState = new Restaurant(1l,null,
+				"1231 Test Ln",  "City 1", null,  "12345","test1@email.com","123-223-5660");
 
-		when(service.findById(4L)).thenReturn(restaurant);
-		ResponseEntity<Restaurant> response=controller.findById(4L);
-
-		//1. Check response status code
-		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-
-		//2. Check response is not  null or empty
-		Assertions.assertNotNull(response.getBody());
-
-		//3. Compare ID
-		Assertions.assertEquals(request.getId(), response.getBody().getId());
-
-	}
-	
-	@Test
-	void findByIdTest_NotFound() {
-		
-		Restaurant request=new Restaurant();
-		request.setId(-99L);
-		
-		when(service.findById(4L)).thenReturn(restaurant);
-		ResponseEntity<Restaurant> response=controller.findById(7L);
-		
-		//1. Check response status code
-		Assertions.assertEquals(HttpStatus.EXPECTATION_FAILED, response.getStatusCode());
-		
-	}
-	
-	@Test
-	void findByIdTest_BadRequest() {
-		when(service.findById(4L)).thenReturn(restaurant);
-		ResponseEntity<Restaurant> response=controller.findById(0);
-		
-		//1. Check response status code
-		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-		
-	}
-	
-	
-	@Test
-	void findByNameTest_Found() {
-		Restaurant request=new Restaurant();
-		request.setName("Taco Bell");
-		
-		when(service.findByName("Taco Bell")).thenReturn(restaurants);
-		ResponseEntity<List<Restaurant>> response=controller.findByName(request);
-		
-		//1. Check response status code
-		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-		
-		//2. Check response is not  null or empty
-		Assertions.assertNotNull(response.getBody());
-		
-		//3.Test equal.
-		assertThat(restaurants, is(response.getBody()));
-		
-		
-	}
-	
-	@Test
-	void findByNameTest_BadRequest() {
-		when(service.findByName("Taco Bell")).thenReturn(restaurants);
-		ResponseEntity<List<Restaurant>> response=controller.findByName(null);
-		
-		//1. Check response status code
-		Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+		mockMvc.perform(put("/api/restaurants")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new ObjectMapper().writeValueAsString(requestWithNullState)))
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
-	void findByCityTest_Found() {
+	@DisplayName("List All Restaurants")
+	void testListAll() throws Exception {
+		List<Restaurant> restaurantList = Arrays.asList(restaurant);
+		when(service.findAll()).thenReturn(restaurantList);
 
-		Restaurant request=new Restaurant();
-		request.setId(4L);
-		request.setCity("Plano");
-
-		List<Restaurant> restaurantList=new ArrayList<>();
-		restaurantList.add(restaurant);
-
-		String city="Plano";
-
-		when(service.findByCity(city)).thenReturn(restaurantList);
-		ResponseEntity<List<Restaurant>> response=controller.findByCity(request);
-
-		//1. Check response status code
-		Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-
-		//2. Check response is not  null or empty
-		Assertions.assertNotNull(response.getBody());
-
-
+		mockMvc.perform(get("/api/restaurants"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.length()").value(1));
 	}
-	
-	
+
+	@Test
+	@DisplayName("Find Restaurant By Id")
+	void testFindById() throws Exception {
+		// Test case 1: Valid ID
+		long validId = 1L;
+		when(service.findById(validId)).thenReturn(restaurant);
+
+		mockMvc.perform(get("/api/restaurants/id/{id}", validId))
+				.andExpect(status().isOk());
+
+		// Test case 2: Invalid ID (0)
+		long invalidId = 0L;
+
+		mockMvc.perform(get("/api/restaurants/id/{id}", invalidId))
+				.andExpect(status().isBadRequest());
+
+		// Test case 3: Restaurant not found
+		long nonExistentId = 999L;
+		when(service.findById(nonExistentId)).thenReturn(null);
+
+		mockMvc.perform(get("/api/restaurants/id/{id}", nonExistentId))
+				.andExpect(status().isExpectationFailed());
+	}
+
+	@Test
+	@DisplayName("Find Restaurant By Name")
+	void testFindByName() throws Exception {
+		// Test case 1: Valid request
+		String validName = "Taco Bell";
+		List<Restaurant> restaurantList = Arrays.asList(
+				new Restaurant(1l,validName,
+						"1231 Test Ln",  "City 1", "CA",  "12345","test1@email.com","123-223-5660"),
+				new Restaurant(2l,validName,
+						"1231 Test Ln",  "City 2", "CA",  "12346","test2@email.com","123-223-5661"));
+		when(service.findByName(validName)).thenReturn(restaurantList);
+
+		mockMvc.perform(post("/api/restaurants/name")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new ObjectMapper().writeValueAsString(restaurant)))
+				.andExpect(status().isOk());
+
+		// Test case 2: Null request
+		mockMvc.perform(post("/api/restaurants/name")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new ObjectMapper().writeValueAsString(null)))
+				.andExpect(status().isBadRequest());
+
+		// Test case 3: Null name in request
+		Restaurant requestWithNullName = new Restaurant(1l,null,
+				"1231 Test Ln",  "City 1", "CA",  "12345","test1@email.com","123-223-5660");
+
+		mockMvc.perform(post("/api/restaurants/name")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new ObjectMapper().writeValueAsString(requestWithNullName)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@DisplayName("Find Restaurant By City")
+	void testFindByCity() throws Exception {
+		// Test case 1: Valid request
+		String cityName = "Plano";
+		List<Restaurant> restaurantList = Arrays.asList(
+				new Restaurant(1l,"Taco Bell",
+						"1231 Test Ln",  cityName, "CA",  "12345","test1@email.com","123-223-5660"),
+				new Restaurant(2l,"Thai Thumbz",
+						"1231 Test Ln",  cityName, "CA",  "12346","test2@email.com","123-223-5661"));
+
+		when(service.findByCity(cityName)).thenReturn(restaurantList);
+
+		mockMvc.perform(post("/api/restaurants/city")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new ObjectMapper().writeValueAsString(restaurant)))
+				.andExpect(status().isOk());
+
+
+		// Test case 2: Null request
+		mockMvc.perform(post("/api/restaurants/city")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new ObjectMapper().writeValueAsString(null)))
+				.andExpect(status().isBadRequest());
+
+		// Test case 3: Null city in request
+		Restaurant requestWithNullName = new Restaurant(1l,"Taco Bell",
+				"1231 Test Ln",  null, "CA",  "12345","test1@email.com","123-223-5660");
+
+		mockMvc.perform(post("/api/restaurants/city")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new ObjectMapper().writeValueAsString(requestWithNullName)))
+				.andExpect(status().isBadRequest());
+	}
+
+
+	@Test
+	@DisplayName("Find Restaurant By Zip")
+	void testFindByZip() throws Exception {
+		// Test case 1: Valid ID
+		String validZip = "75074";
+		when(service.findByZipCode(validZip)).thenReturn(restaurants);
+
+		mockMvc.perform(get("/api/restaurants/zip/{zipCode}", validZip))
+				.andExpect(status().isOk());
+
+		// Test case 3: Restaurant not found
+		String nonExistentZipCode = "AAA";
+		when(service.findByZipCode(nonExistentZipCode)).thenReturn(Collections.emptyList());
+		mockMvc.perform(get("/api/restaurants/zip/{zipCode}", nonExistentZipCode))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	@DisplayName("Find Restaurant By State")
+	void testFindByState() throws Exception {
+		// Test case 1: Valid ID
+		String validState = "TX";
+		when(service.findByState(validState)).thenReturn(restaurants);
+		mockMvc.perform(get("/api/restaurants/state/{state}", validState))
+				.andExpect(status().isOk());
+
+
+		// Test case 3: Restaurant not found
+		String nonExistentStateCode = "AAA";
+		when(service.findByState(nonExistentStateCode)).thenReturn(Collections.emptyList());
+
+		mockMvc.perform(get("/api/restaurants/state/{state}", nonExistentStateCode))
+				.andExpect(status().isNotFound());
+	}
 }
