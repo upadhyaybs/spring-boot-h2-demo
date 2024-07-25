@@ -3,6 +3,7 @@
  */
 package com.tp.restaurant.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -69,42 +70,53 @@ class RestaurantRestControllerTest {
 		restaurants.add(restaurant);
 	}
 
-	@Test
-	void testSaveRestaurant() throws Exception {
-		when(service.save(restaurant)).thenReturn(restaurant);
-
-		mockMvc.perform(put("/api/restaurants")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(new ObjectMapper().writeValueAsString(restaurant)))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name").value("Taco Bell"));
-	}
+	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@Test
 	@DisplayName("Save Restaurant Test with Bad Payload")
-	void testSaveRestaurantWithInvalidRequest() throws Exception {
-		// Test case 1: Null request
+	void testSaveRestaurant_NullRequest() throws Exception {
 		mockMvc.perform(put("/api/restaurants")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(new ObjectMapper().writeValueAsString(null)))
+						.content(objectMapper.writeValueAsString(null)))
 				.andExpect(status().isBadRequest());
+	}
 
-		// Test case 2: Request with null name
+	@Test
+	@DisplayName("Save Restaurant Test with Null Name")
+	void testSaveRestaurant_NullName() throws Exception {
+
 		Restaurant requestWithNullName = new Restaurant(1l,null,
 				"1231 Test Ln",  "City 1", "CA",  "12345","test1@email.com","123-223-5660");
-		mockMvc.perform(put("/api/restaurants")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(new ObjectMapper().writeValueAsString(requestWithNullName)))
-				.andExpect(status().isBadRequest());
-
-		// Test case 3: Request with null state
-		Restaurant requestWithNullState = new Restaurant(1l,null,
-				"1231 Test Ln",  "City 1", null,  "12345","test1@email.com","123-223-5660");
 
 		mockMvc.perform(put("/api/restaurants")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(new ObjectMapper().writeValueAsString(requestWithNullState)))
+						.content(objectMapper.writeValueAsString(requestWithNullName)))
 				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@DisplayName("Save Restaurant Test with Null State")
+	void testSaveRestaurant_NullState() throws Exception {
+		Restaurant restaurantWithNullState = new Restaurant(1l,"Test Restaurant",
+				"1231 Test Ln",  "City 1", null,  "12345","XXXXXXXXXXXXXXX","000000000000");
+
+		mockMvc.perform(put("/api/restaurants")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(restaurantWithNullState)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@DisplayName("Save Restaurant Test with Valid Payload")
+	void testSaveRestaurant_ValidRequest() throws Exception {
+		Restaurant savedRestaurant = restaurant;
+		when(service.save(any(Restaurant.class))).thenReturn(savedRestaurant);
+
+		mockMvc.perform(put("/api/restaurants")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(restaurant)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("Taco Bell"));
 	}
 
 	@Test
@@ -178,36 +190,29 @@ class RestaurantRestControllerTest {
 	@Test
 	@DisplayName("Find Restaurant By City")
 	void testFindByCity() throws Exception {
-		// Test case 1: Valid request
-		String cityName = "Plano";
-		List<Restaurant> restaurantList = Arrays.asList(
-				new Restaurant(1l,"Taco Bell",
-						"1231 Test Ln",  cityName, "CA",  "12345","test1@email.com","123-223-5660"),
-				new Restaurant(2l,"Thai Thumbz",
-						"1231 Test Ln",  cityName, "CA",  "12346","test2@email.com","123-223-5661"));
-
-		when(service.findByCity(cityName)).thenReturn(restaurantList);
-
-		mockMvc.perform(post("/api/restaurants/city")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(new ObjectMapper().writeValueAsString(restaurant)))
-				.andExpect(status().isOk());
-
-
-		// Test case 2: Null request
+		// Test case 1: Null request
 		mockMvc.perform(post("/api/restaurants/city")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(new ObjectMapper().writeValueAsString(null)))
 				.andExpect(status().isBadRequest());
 
-		// Test case 3: Null city in request
-		Restaurant requestWithNullName = new Restaurant(1l,"Taco Bell",
+		// Test case 2: Null city in request
+		Restaurant requestWithNullCity = new Restaurant(1l,"Taco Bell",
 				"1231 Test Ln",  null, "CA",  "12345","test1@email.com","123-223-5660");
 
 		mockMvc.perform(post("/api/restaurants/city")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(new ObjectMapper().writeValueAsString(requestWithNullName)))
+						.content(new ObjectMapper().writeValueAsString(requestWithNullCity)))
 				.andExpect(status().isBadRequest());
+
+		// Test case 3: Valid request
+		String cityName = "Plano";
+		when(service.findByCity(cityName)).thenReturn(restaurants);
+
+		mockMvc.perform(post("/api/restaurants/city")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(new ObjectMapper().writeValueAsString(restaurant)))
+				.andExpect(status().isOk());
 	}
 
 
